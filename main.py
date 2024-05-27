@@ -1,9 +1,18 @@
 import os
 from pytube import YouTube, Playlist
-
+from song import Song
 # URL de la playlist de YouTube
-playlist_url = 'https://music.youtube.com/playlist?list=PLvozzQtjAFILHv_oG0gzYVZ6r7NTlK-tQ'
-
+songs=[]
+def verificar_enlace(url):
+    cad='playlist'
+    try:
+        if cad in url:
+            return "playlist"
+        else:
+            return "cancion"
+    except Exception as e:
+        print(f"Error al verificar el enlace: {e}")
+        return None
 
 # Función para descargar una playlist
 def descargar_playlist(url, ruta_descarga):
@@ -17,7 +26,9 @@ def descargar_playlist(url, ruta_descarga):
 
         # Descargar cada video de la playlist
         for video in playlist.videos:
-            descargar_audio(video.watch_url, ruta_playlist)
+            song = descargar_audio(video.watch_url, ruta_playlist)
+            if song:
+                songs.append(song)
 
         print(f"Descarga de la playlist '{playlist.title}' completada.")
     except Exception as e:
@@ -38,15 +49,29 @@ def descargar_audio(url, ruta_descarga):
         nuevo_archivo = base + '.mp3'
         os.rename(audio, nuevo_archivo)
 
-        print(f"Descarga completada: {nuevo_archivo}")
+        song_info = Song(yt.title, yt.author, yt.length, nuevo_archivo)
+        print(song_info)
+
+        return song_info
     except Exception as e:
         print(f"Error al descargar el video: {e}")
+        return None
 
 
 ruta_descarga = './canciones'
+enlace  = 'https://music.youtube.com/watch?v=O_yQPgYmtQw&list=RDAMVMO_yQPgYmtQw'
 
-# Llamar a la función para descargar la playlist
-descargar_playlist(playlist_url, ruta_descarga)
-# Ruta de descarga (puedes cambiarla según tus necesidades)
+tipo_enlace = verificar_enlace(enlace)
 
+if tipo_enlace == "cancion":
+    print("cancion")
+    descargar_audio(enlace, ruta_descarga)
+elif tipo_enlace == "playlist":
+    descargar_playlist(enlace, ruta_descarga)
+else:
+    print("Enlace inválido")
+
+# Imprimir la lista de canciones descargadas
+for song in songs:
+    print(song, "\n")
 
