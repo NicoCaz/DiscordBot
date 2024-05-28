@@ -2,7 +2,7 @@ import os
 from pytube import YouTube, Playlist
 from song import Song
 # URL de la playlist de YouTube
-songs=[]
+
 def verificar_enlace(url):
     cad='playlist'
     try:
@@ -16,6 +16,7 @@ def verificar_enlace(url):
 
 # Función para descargar una playlist
 def descargar_playlist(url, ruta_descarga):
+    songs = []
     try:
         playlist = Playlist(url)
         print(f"Descargando playlist: {playlist.title}")
@@ -31,6 +32,7 @@ def descargar_playlist(url, ruta_descarga):
                 songs.append(song)
 
         print(f"Descarga de la playlist '{playlist.title}' completada.")
+        return songs
     except Exception as e:
         print(f"Error al descargar la playlist: {e}")
 
@@ -57,21 +59,4 @@ def descargar_audio(url, ruta_descarga):
         print(f"Error al descargar el video: {e}")
         return None
 
-
-ruta_descarga = './canciones'
-enlace  = 'https://music.youtube.com/watch?v=O_yQPgYmtQw&list=RDAMVMO_yQPgYmtQw'
-
-tipo_enlace = verificar_enlace(enlace)
-
-if tipo_enlace == "cancion":
-    print("cancion")
-    descargar_audio(enlace, ruta_descarga)
-elif tipo_enlace == "playlist":
-    descargar_playlist(enlace, ruta_descarga)
-else:
-    print("Enlace inválido")
-
-# Imprimir la lista de canciones descargadas
-for song in songs:
-    print(song, "\n")
 
